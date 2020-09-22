@@ -57,7 +57,7 @@ class EmbeddingsExtractor:
         return distance
     
 if __name__ == '__main__':
-    model_ckpt_path = os.path.join('..', 'models', 'embedder_v2.pth')
+    model_ckpt_path = os.path.join('..', 'models', 'embedder.pth')
     ee = EmbeddingsExtractor(model_ckpt_path)
     '''
     img1_path = os.path.join('..', 'dogs', 'train',
