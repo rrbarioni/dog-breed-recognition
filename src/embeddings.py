@@ -10,7 +10,7 @@ from torchvision import transforms
 
 class EmbeddingsExtractor:
     def get_architecture(self):
-        x = torchvision.models.resnet50(pretrained=True)
+        x = torchvision.models.resnet50(pretrained=False)
         x.fc = torch.nn.Sequential(
             torch.nn.Linear(2048, self.n_embeddings),
             torch.nn.Sigmoid())
@@ -67,21 +67,21 @@ if __name__ == '__main__':
     img3_path = os.path.join('..', 'dogs', 'train',
         'n02085936-Maltese_dog', 'n02085936_352.jpg')
     '''
+    '''
     img1_path = os.path.join('..', 'dogs', 'recognition', 'enroll',
         'n02090379-redbone', 'n02090379_91.jpg')
     img2_path = os.path.join('..', 'dogs', 'recognition', 'enroll',
         'n02090379-redbone', 'n02090379_223.jpg')
     img3_path = os.path.join('..', 'dogs', 'recognition', 'enroll',
         'n02087394-Rhodesian_ridgeback', 'n02087394_889.jpg')
-    
     '''
+    
     img1_path = os.path.join('..', 'dogs', 'recognition', 'enroll',
         'n02105056-groenendael', 'n02105056_143.jpg')
     img2_path = os.path.join('..', 'dogs', 'recognition', 'enroll',
         'n02105056-groenendael', 'n02105056_1960.jpg')
     img3_path = os.path.join('..', 'dogs', 'recognition', 'enroll',
         'n02099429-curly-coated_retriever', 'n02099429_227.jpg')
-    '''
     
     
     img1 = Image.open(img1_path)
