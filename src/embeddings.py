@@ -9,50 +9,149 @@ import torchvision
 from torchvision import transforms
 
 class EmbeddingsExtractor:
-    def get_architecture(self):
-        x = torchvision.models.resnet50(pretrained=False)
-        x.fc = torch.nn.Sequential(
-            torch.nn.Linear(2048, self.n_embeddings),
-            torch.nn.Sigmoid())
+    """
+    A class to extract embeddings from RGB images of dogs.
     
-        return x
+    Attributes
+    ----------
+    device : torch.device
+        object for applying inputs, outputs and models to GPU or CPU
+    model : torch.nn
+        model for making the dog embeddings prediction
+    transform : torch.transforms
+        input preprocessing pipeline
+    
+    Methods
+    -------
+    embedder_model(n_embeddings)
+        Generates a CNN ResNet50-based embedder.
+        
+    get_embeddings(img)
+        Predicts the embeddings of a dog image.
+    
+    distance_two_embeddings(embeddings_a, embeddings_b)
+        Computes the difference between two embeddings.
+    """
     
     def __init__(self, model_ckpt_path):
-        self.model_ckpt_path = model_ckpt_path
+        '''
+        Constructs all the attributes for the embedder object.
+        
+        Parameters
+        ----------
+        model_ckpt_path : str
+            path to the file containing the result of the trained model
+        '''
+        
+        # Initialize device (GPU or CPU)
         self.device = torch.device(
             'cuda:0' if torch.cuda.is_available() else 'cpu')
 
-        self.model_ckpt = torch.load(
-            self.model_ckpt_path, map_location=self.device)
-        self.n_embeddings = self.model_ckpt['n_embeddings']
-        self.state_dict = self.model_ckpt['state_dict']
+        # Load checkpoint of the trained model (`model_ckpt`)
+        model_ckpt = torch.load(model_ckpt_path, map_location=self.device)
         
-        self.model = self.get_architecture()
-        self.model.load_state_dict(self.state_dict)
+        # Get the number of embeddings from the trained model
+        n_embeddings = model_ckpt['n_embeddings']
+        
+        # Get the trained model weights from the checkpoint
+        state_dict = model_ckpt['state_dict']
+        
+        # Initialize the model architecture (`model`)
+        self.model = self.embedder_model(n_embeddings)
+        
+        # Load the weights into the model
+        self.model.load_state_dict(state_dict)
         self.model.eval()
         self.model = torch.jit.script(self.model).to(self.device)
         
-        self.input_transform = transforms.Compose([
+        # Initialize preprocessing input pipeline
+        self.transform = transforms.Compose([
             transforms.Resize(256),
             transforms.CenterCrop(224),
             transforms.ToTensor(),
             transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])
+    
+    def embedder_model(self, n_embeddings):
+        '''
+        Generates a CNN ResNet50-based embedder.
+        
+        Parameters
+        ----------
+        n_embeddings
+            number of embeddings to be outputted
+        
+        Returns
+        -------
+        x : torch.nn
+            the model
+        '''
+        
+        # First, `x` is a new ResNet50 CNN model
+        x = torchvision.models.resnet50(pretrained=False)
+        
+        # Change the final fully connected layer so that the output size
+        #   matches the desired `n_embeddings` size. Also, apply sigmoid
+        #   function
+        x.fc = torch.nn.Sequential(
+            torch.nn.Linear(2048, n_embeddings),
+            torch.nn.Sigmoid())
+    
+        return x
         
     def get_embeddings(self, img):
-        rgb_img = img.convert('RGB')
+        '''
+        Predicts the embeddings of a dog image.
         
-        x = self.input_transform(rgb_img)
+        Parameters
+        ----------
+        img : PIL.Image
+            image containing a dog
+
+        Returns
+        -------
+        y : np.array
+            array of embeddings from the input image
+        '''
+        
+        # Read image (`img`) and convert to red-green-blue channels (RGB),
+        #   ensuring the input will have 3 channels
+        img = img.convert('RGB')
+        
+        # `x` refers to the image when the preprocessing pipeline
+        #   (`self.transform`) is applied to the image (`img`)
+        x = self.transform(img)
+        
+        # Add a new dimension to the tensor (simulate a 1-batch size)
         x.unsqueeze_(0)
+        
+        # Pass the input tensor to the used device (GPU or CPU)
         x = x.to(self.device)
         
+        # Calculate the embeddings (`y`) from the input `x` according to `model`
         y = self.model(x)
+        
+        # Remove extra dimension 0
         y.squeeze_(0)
+        
+        # Convert from torch.Tensor to np.array
         y = y.detach().numpy()
         
         return y
     
-    def distance_two_embeddings(self, e1, e2):
-        distance = np.sum((e1 - e2) ** 2)
+    def distance_two_embeddings(self, embeddings_a, embeddings_b):
+        '''
+        Computes the difference between two embeddings.
+        
+        Parameters
+        ----------
+        embeddings_a : np.array
+            embeddings from the first image
+        embeddings_b : np.array
+            embeddings from the second image
+        '''
+        
+        # `distance` computes the euclidean distance between the embeddings
+        distance = np.linalg.norm(embeddings_a - embeddings_b)
         
         return distance
     
