@@ -58,7 +58,7 @@ class EmbeddingsExtractor:
     
 if __name__ == '__main__':
     model_ckpt_path = os.path.join('..', 'models', 'embedder.pth')
-    ee = EmbeddingsExtractor(model_ckpt_path)
+    embeddings_extractor = EmbeddingsExtractor(model_ckpt_path)
     '''
     img1_path = os.path.join('..', 'dogs', 'train',
         'n02085620-Chihuahua', 'n02085620_199.jpg')
@@ -88,10 +88,10 @@ if __name__ == '__main__':
     img2 = Image.open(img2_path)
     img3 = Image.open(img3_path)
     
-    e1 = ee.get_embeddings(img1)
-    e2 = ee.get_embeddings(img2)
-    e3 = ee.get_embeddings(img3)
+    e1 = embeddings_extractor.get_embeddings(img1)
+    e2 = embeddings_extractor.get_embeddings(img2)
+    e3 = embeddings_extractor.get_embeddings(img3)
     
-    print(ee.distance_two_embeddings(e1, e2))
-    print(ee.distance_two_embeddings(e1, e3))
-    print(ee.distance_two_embeddings(e2, e3))
+    print(embeddings_extractor.distance_two_embeddings(e1, e2))
+    print(embeddings_extractor.distance_two_embeddings(e1, e3))
+    print(embeddings_extractor.distance_two_embeddings(e2, e3))
