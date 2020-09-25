@@ -22,8 +22,11 @@ class Enroller:
         list of current extracted corresponding dog breed indexes
     classes : list<str>
         list of current dog breeds
-    next_class_index : int
+    curr_class_index : int
         index to which address the next dog breed to be added
+    batch_size : int
+        defines the number of images to be fed simultaneously to the model at
+            the enrolling step
     classifier : sklearn.KNeighborsClassifier
         a classifier for predicting dog breeds from embeddings
     
@@ -46,7 +49,7 @@ class Enroller:
           dog breeds existent on the classifier.
     """
     
-    def __init__(self, model_ckpt_path, initial_enroll_path=None):
+    def __init__(self, model_ckpt_path, initial_enroll_path=None, batch_size=1):
         '''
         Constructs all the attributes for the enroller object.
 
@@ -57,6 +60,9 @@ class Enroller:
         initial_enroll_path : str
             path to the file containing the embeddings from the initial set of
               dog images
+        batch_size : int
+            defines the number of images to be fed simultaneously to the model
+              at the enrolling step
         '''
         
         # Instantiate embeddings extractor
@@ -75,7 +81,9 @@ class Enroller:
                 self.classes += initial_enroll['classes']
         
         # Instantiate the index for when enrolling a new dog breed
-        self.next_class_index = len(self.classes)
+        self.curr_class_index = len(self.classes)
+        
+        self.batch_size = batch_size
         
         # Instantiate dog breed classifier from initial embeddings and dog
         #   breed indexes
@@ -95,6 +103,60 @@ class Enroller:
         # "Training" the classifier from the current embeddings and dog breed
         #   indexes
         self.classifier.fit(self.embeddings, self.labels)
+        
+    def enroll_new_class_from_imgs_in_batches(self, imgs, class_name):
+        '''
+        Dynamically adds a new dog breed to be applied to the classifier from a 
+          list of dog images.
+
+        Parameters
+        ----------
+        imgs : list<PIL.Image>
+            List of dog images of the current dog breed to be enrolled
+        class_name : str
+            Name of the dog breed
+        '''
+        
+        # Add new dog breed to the list of dog breed names
+        self.classes.append(class_name)
+        
+        # Divide list of dog images into batches (`imgs_batches`) in order to
+        #   be more efficiently consumed by the embeddings extractor
+        imgs_batches = [imgs[i:i + self.batch_size]
+            for i in range(0, len(imgs), self.batch_size)]
+        
+        # Using tqdm to iteratively keep track on the number of iterated
+        #   samples on the console
+        imgs_batches = tqdm.tqdm(imgs_batches, position=0, leave=True)
+        
+        # Iterate through all batches of images of the current dog breed to be
+        #   enrolled
+        for imgs in imgs_batches:
+            
+            # Extract embeddings from the image batch (`curr_embeddings_list`)
+            curr_embeddings_list = \
+                self.embeddings_extractor.get_embeddings_batch(imgs)
+            
+            # Attach current extracted embeddings list to the list of all
+            #   embeddings
+            self.embeddings += list(curr_embeddings_list)
+            
+            # Instantiate the list of dog breed indexes for each sample of the
+            #   current batch
+            curr_class_index_list = [self.curr_class_index
+                for i in range(len(imgs))]
+            
+            # Attach the dog breed index of the current instance to the list of
+            #   all extracted dog breed indexes of the current batch
+            self.labels += curr_class_index_list
+            
+        # After adding all instances of the current dog breed, increment the
+        #   dog breed index for when enrolling another new dog breed
+        self.curr_class_index += 1
+        
+        # Instantiate dog breed classifier from the currentembeddings and dog
+        #   breed indexes
+        self.create_classifier()
         
     def enroll_new_class_from_imgs(self, imgs, class_name):
         '''
@@ -116,7 +178,7 @@ class Enroller:
         #   samples on the console
         imgs = tqdm.tqdm(imgs, position=0, leave=True)
         
-        # Iterate through all images of the 
+        # Iterate through all images of the current dog breed to be enrolled
         for img in imgs:
             
             # Extract embeddings from the image (`curr_embeddings`)
@@ -127,11 +189,11 @@ class Enroller:
             
             # Attach the dog breed index of the current instance to the list of
             #   all extracted dog breed indexes
-            self.labels.append(self.next_class_index)
+            self.labels.append(self.curr_class_index)
             
         # After adding all instances of the current dog breed, increment the
         #   dog breed index for when enrolling another new dog breed
-        self.next_class_index += 1
+        self.curr_class_index += 1
         
         # Instantiate dog breed classifier from the currentembeddings and dog
         #   breed indexes
@@ -185,11 +247,11 @@ class Enroller:
             
             # Attach the dog breed index of the current instance to the list of
             #   all extracted dog breed indexes
-            self.labels.append(self.next_class_index)
+            self.labels.append(self.curr_class_index)
         
         # After adding all instances of the current dog breed, increment the
         #   dog breed index for when enrolling another new dog breed
-        self.next_class_index += 1
+        self.curr_class_index += 1
         
         # Instantiate dog breed classifier from the currentembeddings and dog
         #   breed indexes

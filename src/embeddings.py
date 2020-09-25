@@ -24,7 +24,10 @@ class EmbeddingsExtractor:
     Methods
     -------
     embedder_model(n_embeddings)
-        Generates a CNN ResNet50-based embedder.
+        Generates a CNN ResNet50-based embedder
+        
+    get_embeddings_batch(img)
+        Predicts the embeddings from a batch of dog images..
         
     get_embeddings(img)
         Predicts the embeddings of a dog image.
@@ -64,6 +67,9 @@ class EmbeddingsExtractor:
         self.model.eval()
         self.model = torch.jit.script(self.model).to(self.device)
         
+        # Do first predict, which is always the slowest
+        self.model(torch.rand(1, 3, 224, 224))
+        
         # Initialize preprocessing input pipeline
         self.transform = transforms.Compose([
             transforms.Resize(256),
@@ -97,6 +103,43 @@ class EmbeddingsExtractor:
             torch.nn.Sigmoid())
     
         return x
+    
+    def get_embeddings_batch(self, imgs):
+        '''
+        Predicts the embeddings from a batch of dog images.
+        
+        Parameters
+        ----------
+        imgs : list<PIL.Immage>
+            batch of dog images
+        
+        Returns
+        -------
+        y : np.array
+            embeddings from each dog image
+        '''
+        
+        # Convert each dog image (`img`) to red-green-blue channels (RGB),
+        #   ensuring the input will have 3 channels
+        imgs = [img.convert('RGB') for img in imgs]
+        
+        # Apply preprocessing pipeline to each input (`xs`)        
+        xs = [self.transform(img) for img in imgs]
+        
+        # Concatenate the list of preprocessed input tensors to a single one
+        x = torch.stack(xs)
+
+        # Pass the input tensor to the used device (GPU or CPU)
+        x = x.to(self.device)
+        
+        # Calculate the list of embeddings (`y`) from the input `x` according
+        #   to `model`
+        y = self.model(x)
+        
+        # Convert from torch.Tensor to np.array
+        y = y.detach().numpy()
+        
+        return y
         
     def get_embeddings(self, img):
         '''
