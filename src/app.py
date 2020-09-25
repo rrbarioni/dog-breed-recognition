@@ -32,7 +32,7 @@ def get_dog_breed_classification():
 
             imgs_files = request.files.getlist('files')
             imgs = [Image.open(io.BytesIO(img_file.read()))
-                for img_file in imgs_file]
+                for img_file in imgs_files]
 
             
 
