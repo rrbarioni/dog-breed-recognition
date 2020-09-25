@@ -9,8 +9,8 @@ app = Flask(__name__)
 from enroll import Enroller
 
 enroller = Enroller(
-    initial_enroll_path=os.path.join('..', 'models', 'initial_enroll.pkl'),
-    model_ckpt_path=os.path.join('..', 'models', 'embedder.pth'))
+    model_ckpt_path=os.path.join('..', 'models', 'embedder.pth'),
+    initial_enroll_path=os.path.join('..', 'models', 'initial_enroll.pkl'))
 
 @app.route('/')
 def index():
@@ -22,7 +22,7 @@ def get_dog_breed_classification():
         if request.form['action'] == 'Classify':
             img_file = request.files['file']
             img = Image.open(io.BytesIO(img_file.read()))
-            dog_breed = enroller.get_classification(img)
+            dog_breed = enroller.get_classification(img=img)
 
             return render_template('index_dog_breed_classify.html',
                 data={ 'dog_breed': dog_breed })
@@ -34,7 +34,7 @@ def get_dog_breed_classification():
             imgs = [Image.open(io.BytesIO(img_file.read()))
                 for img_file in imgs_files]
 
-            
+            enroller.enroll_new_class_from_imgs(imgs=imgs, class_name=dog_breed)
 
             return render_template('index_new_dog_breed_add.html',
                 data={ 'dog_breed': dog_breed })
