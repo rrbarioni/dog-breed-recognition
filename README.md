@@ -1,5 +1,22 @@
+
 # dog-breed-recognition
 An algorithm for the recognition of dog breeds from RGB images.
+
+## App usage
+- Clone the repository:
+````
+git clone https://github.com/rrbarioni/dog-breed-recognition.git
+````
+- Generate the dog embeddings extractor as described at **Dog Embeddings Extraction and Breed Enrolling**;
+- Navigate to the *src/* folder:
+````
+cd dog-breed-recognition/src
+````
+- Run the app and choose a batch size for performing dog enrolling, according to your GPU:
+````
+python app.py --batch_size 8
+````
+- Access the app at *http://localhost:5000/*
 
 ## Dog Breed Classification
 This is a **ResNet50-based Convolutional Neural Network (CNN)** to classify dogs among 100 breeds. Given an image of a dog, the algorithm is responsible for predicting its breed.
