@@ -65,8 +65,8 @@ if __name__ == '__main__':
     # When the service is on, instantiate the dog breed classifier/enroller
     #   object
     enroller = Enroller(
-        model_ckpt_path=os.path.join('..', 'models', 'embedder.pth'),
-        initial_enroll_path=os.path.join('..', 'models', 'initial_enroll.pkl'),
+        model_ckpt_path=os.path.join('models', 'embedder.pth'),
+        initial_enroll_path=os.path.join('models', 'initial_enroll.pkl'),
         batch_size=batch_size)
 
-    app.run()
+    app.run(host='0.0.0.0', port=80)
