@@ -1,18 +1,19 @@
-# set base image (host OS)
+# Set base image (host OS)
 FROM python:3.7
 
-# set the working directory in the container
+# Set the working directory in the container
 WORKDIR /app
 
-# copy the dependencies file to the working directory
+# Copy the dependencies file to the working directory
 COPY requirements.txt .
 
-# install dependencies
+# Install Python dependencies
 RUN pip install -r requirements.txt
 
-# copy the content of the local src directory to the working directory
+# Copy the content of the local src and models directory to the working directory
 COPY src/ ./src
 COPY models/ ./models
 
-# command to run on container start
-CMD [ "python", "./src/app.py", "--batch_size", "8" ]
+# Command to run on container start
+ENV batch_size=1
+CMD [ "sh", "-c", "python ./src/app.py --batch_size $batch_size"]
