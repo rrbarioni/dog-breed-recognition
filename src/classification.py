@@ -137,7 +137,7 @@ class Classifier:
         y.squeeze_(0)
         
         # Convert from torch.Tensor to np.array
-        y = y.detach().numpy()
+        y = y.detach().cpu().numpy()
         
         # `n_best_class_indexes` encodes the index of the n-most confident dog
         #   breeds from the input image
