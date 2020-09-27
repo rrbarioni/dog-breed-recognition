@@ -137,7 +137,8 @@ class EmbeddingsExtractor:
         y = self.model(x)
         
         # Convert from torch.Tensor to np.array
-        y = y.detach().numpy()
+        # y = y.detach().numpy()
+        y = y.detach().cpu().numpy()
         
         return y
         
@@ -177,7 +178,8 @@ class EmbeddingsExtractor:
         y.squeeze_(0)
         
         # Convert from torch.Tensor to np.array
-        y = y.detach().numpy()
+        # y = y.detach().numpy()
+        y = y.detach().cpu().numpy()
         
         return y
     
@@ -199,8 +201,7 @@ class EmbeddingsExtractor:
         return distance
     
 if __name__ == '__main__':
-    # model_ckpt_path = os.path.join('..', 'models', 'embedder.pth')
-    model_ckpt_path = os.path.join('..', 'models', 'embedder_lossless.pth')
+    model_ckpt_path = os.path.join('..', 'models', 'embedder.pth')
     embeddings_extractor = EmbeddingsExtractor(model_ckpt_path)
     '''
     img1_path = os.path.join('..', 'dogs', 'train',
