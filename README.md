@@ -1,5 +1,3 @@
-
-
 # dog-breed-recognition
 An algorithm for the recognition of dog breeds from RGB images.
 
@@ -18,6 +16,8 @@ docker build -t dog_breed_recognition_image .
 docker run -e batch_size=8 -p 80:80 dog_breed_recognition_image
 ````
 The system should be live at `http://0.0.0.0:80/`
+
+**Note**: If using a GPU, please refer to `requirements.txt` for changing the *torch* and *torchvision* dependencies by removing "+cpu".
 
 ## Dog Breed Classification
 This is a **ResNet50-based Convolutional Neural Network (CNN)** to classify dogs among 100 breeds. Given an image of a dog, the algorithm is responsible for predicting its breed.
