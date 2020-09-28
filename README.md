@@ -1,3 +1,4 @@
+
 # dog-breed-recognition
 An algorithm for the recognition of dog breeds from RGB images.
 
@@ -24,7 +25,12 @@ This is a **ResNet50-based Convolutional Neural Network (CNN)** to classify dogs
 
 ### Instructions
 
-#### Training the classifier
+#### Getting the pre-trained classifier
+
+- Download the classifier [here](https://drive.google.com/file/d/1-8vHTVxI5SxEuK41xujYHUHjqZtyJhaC/view?usp=sharing);
+- After cloning the repository locally (let's call it *root/*), create a directory called *models/* inside of it (so it should be *root/models/*) and place the downloaded classifier *classifier.pth* there.
+
+#### (Or train the classifier on your own)
 
 It is important to mention that, as I do not have a machine with GPU, I have used Google Colab for this purpose. As so, here is what I did:
  
@@ -48,11 +54,10 @@ It is important to mention that, as I do not have a machine with GPU, I have use
         |-- classifier.ipynb
     |-- models/
 ````
-- Now, follow the instructions at *dog-breed-recognition/src/classifier.ipynb* to generate the classifier, which will be stored at *dog-breed-recognition/models/classifier.pth*.
+- Follow the instructions at *dog-breed-recognition/src/classifier.ipynb* to generate the classifier, which will be stored at *dog-breed-recognition/models/classifier.pth*;
+- After cloning the repository locally (let's call it *root/*), create a directory called *models/* inside of it (so it should be *root/models/*) and place the generated classifier from Google Colab (*dog-breed-recognition/models/classifier.pth*) there.
 
 #### Using the classifier
-
-- After cloning the repository locally (let's call it *root/*), create a directory called *models/* inside of it (so it should be *root/models/*) and place the generated classifier from Google Colab (*dog-breed-recognition/models/classifier.pth*) there.
 
 For usage on a input image, you may refer to *root/src/classification.py*; from an image of a dog, the classifier outputs a list of n-mostlike dog breeds, as well as their confidence values.
 
@@ -63,7 +68,12 @@ This is a two-step algorithm for extract embeddings from images and dynamically 
 
 ### Instructions
 
-#### Training the embedding extractor
+#### Getting the pre-trained embeddings extractor
+
+- Download the classifier [here](https://drive.google.com/file/d/13zzwBSRvJQzx56KRXnjyXrplbPbRlmML/view?usp=sharing);
+- After cloning the repository locally (let's call it *root/*), create a directory called *models/* inside of it (so it should be *root/models/*) and place the downloaded embeddings extractor *embedder.pth* there.
+
+#### (Or train the embeddings extractor on your own)
 
 It is important to mention that, as I do not have a machine with GPU, I have used Google Colab for this purpose. As so, here is what I did:
  
@@ -87,13 +97,19 @@ It is important to mention that, as I do not have a machine with GPU, I have use
         |-- embedder.ipynb
     |-- models/
 ````
-- Now, follow the instructions at *dog-breed-recognition/src/embedder.ipynb* to generate the embeddings extractor, which will be stored at *dog-breed-recognition/models/embedder.pth*.
+- Follow the instructions at *dog-breed-recognition/src/embedder.ipynb* to generate the embeddings extractor, which will be stored at *dog-breed-recognition/models/embedder.pth*;
+- After cloning the repository locally (let's call it *root/*), create a directory called *models/* inside of it (so it should be *root/models/*) and place the generated embedder from Google Colab (*dog-breed-recognition/models/embedder.pth*) there.
 
-#### Generating embeddings from a initial set of dog breeds
+#### Getting the pre-generated embeddings from a initial set of dog breeds
+
+- Download pre-generated embeddings [here](https://drive.google.com/file/d/1-BZhsGX5SOcwbj6RbNw4Ibjxq_7gEQSg/view?usp=sharing);
+- After cloning the repository locally (let's call it *root/*), create a directory called *models/* inside of it (so it should be *root/models/*) and place the downloaded training set of embeddings *initial_enroll.pkl* there.
+
+#### (Or generate embeddings from a initial set of dog breeds on your own)
 
 This step is also performed at Google Colab, once it aims to extract embeddings of dog images of all dog breed from the training set. Here is what I did:
 
-- Similarly to the embedding extractor training, I have placed my initial embedding extraction notebook code (*src/initial_enroller.ipynb*) in Google Drive, at *dog-breed-recognition/src/*;
+- Similarly to the embeddings extractor training, I have placed my initial embeddings extraction notebook code (*src/initial_enroller.ipynb*) in Google Drive, at *dog-breed-recognition/src/*;
 - Now, *dog-breed-recognition/* at Google Drive should be like this:
 ````
 |-- dog-breed-recognition/
@@ -108,10 +124,9 @@ This step is also performed at Google Colab, once it aims to extract embeddings 
         |-- initial_enroller.ipynb
     |-- models/
 ````
-- Now, follow the instructions at *dog-breed-recognition/src/initial_enroller.ipynb* to generate embeddings from the training set, which will be stored at *dog-breed-recognition/models/initial_enroll.pkl*.
+- Follow the instructions at *dog-breed-recognition/src/initial_enroller.ipynb* to generate embeddings from the training set, which will be stored at *dog-breed-recognition/models/initial_enroll.pkl*;
+- After cloning the repository locally (let's call it *root/*), create a directory called *models/* inside of it (so it should be *root/models/*) and place the generated training set embeddings from Google Colab (*dog-breed-recognition/models/initial_enroll.pkl*) there.
 
 #### Using the dog breed enroller
-
-- After cloning the repository locally (let's call it *root/*), create a directory called *models/* inside of it (so it should be *root/models/*) and place the generated embedder from Google Colab (*dog-breed-recognition/models/embedder.pth*) there. Also, place the generated training set embeddings from Google Colab (*dog-breed-recognition/models/initial_enroll.pkl*) there.
 
 For usage on an input new dog breed, you may refer to *root/src/enroll.py*; from a directory containing images from the same dog breed, the enroller dynamically adds this dog breed to a classifier, in order to be recognized when inputting new dog image samples of that dog breed.
