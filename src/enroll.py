@@ -95,14 +95,22 @@ class Enroller:
           and corresponding labels.
         '''
         
-        # Instantiate a KNN classifier. Also considering the distance criteria
-        #   for prediction
-        self.classifier = KNeighborsClassifier(n_neighbors=10,
-            weights='distance')
-        
-        # "Training" the classifier from the current embeddings and dog breed
-        #   indexes
-        self.classifier.fit(self.embeddings, self.labels)
+        # Check if any dog breed was pre-enrolled (if not, the classifier will
+        #   not exist yet)
+        if len(self.classes) > 0:
+            
+            # Instantiate a KNN classifier. Also considering the distance
+            #   criteria for prediction
+            self.classifier = KNeighborsClassifier(n_neighbors=50,
+                weights='distance')
+            
+            # "Training" the classifier from the current embeddings and dog
+            #   breed indexes
+            self.classifier.fit(self.embeddings, self.labels)
+        else:
+            
+            # Instantiate empty classifier
+            self.classifier = None
         
     def enroll_new_class_from_imgs_in_batches(self, imgs, class_name):
         '''
@@ -273,38 +281,48 @@ class Enroller:
             predicted dog breed
         '''
         
-        # Extract embeddings from the image (`img_embeddings`)
-        img_embeddings = self.embeddings_extractor.get_embeddings(img)
+        # Classify only if there are enrolled dog breeds in the system
+        if self.classifier is not None:
         
-        # Predict the dog breed index (`label`) from the embeddings by using
-        #   the KNN classifier (as the KNN prediction receives a batch of
-        #   samples, `img_embeddings` is attached to a list and the first
-        #   result of the batch is extracted)
-        label = self.classifier.predict([img_embeddings])[0]
-        
-        # Get the dog breed name by its index (`dog_breed`)
-        dog_breed = self.classes[label]
+            # Extract embeddings from the image (`img_embeddings`)
+            img_embeddings = self.embeddings_extractor.get_embeddings(img)
+            
+            # Predict the dog breed index (`label`) from the embeddings by
+            #   using the KNN classifier (as the KNN prediction receives a
+            #   batch of samples, `img_embeddings` is attached to a list and
+            #   the first result of the batch is extracted)
+            label = self.classifier.predict([img_embeddings])[0]
+            
+            # Get the dog breed name by its index (`dog_breed`)
+            dog_breed = self.classes[label]
+        else:
+            
+            # Ignore the classification task if the dog breed classifier does
+            #   not exist yet
+            dog_breed = 'unknown'
         
         return dog_breed
-        
+
 if __name__ == '__main__':
-    model_ckpt_path = os.path.join('..', 'models', 'embedder.pth')
-    initial_enroll_path = os.path.join('..', 'models', 'initial_enroll.pkl')
-    
-    enroller = Enroller(model_ckpt_path, initial_enroll_path)
+    enroller = Enroller(
+        model_ckpt_path=os.path.join('..', 'models', 'embedder.pth'),
+        initial_enroll_path=os.path.join('..', 'models', 'initial_enroll.pkl'),
+        batch_size=4)
     
     new_class_path = os.path.join('..', 'dogs', 'recognition', 'enroll',
         'n02087394-Rhodesian_ridgeback')
     enroller.enroll_new_class_from_path(new_class_path)
     
-    test_img_path = os.path.join('..', 'dogs', 'recognition', 'test',
+    img_path = os.path.join('..', 'dogs', 'recognition', 'test',
         'n02087394-Rhodesian_ridgeback', 'n02087394_381.jpg')
-    test_img_path = os.path.join('..', 'dogs', 'recognition', 'enroll',
+    img_path = os.path.join('..', 'dogs', 'recognition', 'enroll',
         'n02087394-Rhodesian_ridgeback', 'n02087394_9855.jpg')
-    test_img_path = os.path.join('..', 'dogs', 'train',
+    img_path = os.path.join('..', 'dogs', 'train',
         'n02088364-beagle', 'n02088364_2360.jpg')
-    test_img_path = os.path.join('..', 'dogs', 'train',
+    img_path = os.path.join('..', 'dogs', 'train',
         'n02091635-otterhound', 'n02091635_1043.jpg')
     
-    test_img = Image.open(test_img_path)
-    c = enroller.get_classification(test_img)
+    img = Image.open(img_path)
+    c = enroller.get_classification(img)
+    
+    print(c)

@@ -70,7 +70,7 @@ This is a two-step algorithm for extract embeddings from images and dynamically 
 
 #### Getting the pre-trained embeddings extractor
 
-- Download the classifier [here](https://drive.google.com/file/d/13zzwBSRvJQzx56KRXnjyXrplbPbRlmML/view?usp=sharing);
+- Download the pre-trained embeddings extractor [here](https://drive.google.com/file/d/1zhXNrfpoA_JYlcU2QgCVW8VKfFZMTN62/view?usp=sharing);
 - After cloning the repository locally (let's call it *root/*), create a directory called *models/* inside of it (so it should be *root/models/*) and place the downloaded embeddings extractor *embedder.pth* there.
 
 #### (Or train the embeddings extractor on your own)
@@ -102,7 +102,7 @@ It is important to mention that, as I do not have a machine with GPU, I have use
 
 #### Getting the pre-generated embeddings from a initial set of dog breeds
 
-- Download pre-generated embeddings [here](https://drive.google.com/file/d/1-BZhsGX5SOcwbj6RbNw4Ibjxq_7gEQSg/view?usp=sharing);
+- Download pre-generated embeddings [here](https://drive.google.com/file/d/1atfoq6365gZfT4F3uauHShx4G14o3LHF/view?usp=sharing);
 - After cloning the repository locally (let's call it *root/*), create a directory called *models/* inside of it (so it should be *root/models/*) and place the downloaded training set of embeddings *initial_enroll.pkl* there.
 
 #### (Or generate embeddings from a initial set of dog breeds on your own)
