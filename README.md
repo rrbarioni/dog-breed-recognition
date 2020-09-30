@@ -70,7 +70,7 @@ This is a two-step algorithm for extract embeddings from images and dynamically 
 
 #### Getting the pre-trained embeddings extractor
 
-- Download the classifier [here](https://drive.google.com/file/d/1zhXNrfpoA_JYlcU2QgCVW8VKfFZMTN62/view?usp=sharing);
+- Download the pre-trained embeddings extractor [here](https://drive.google.com/file/d/1zhXNrfpoA_JYlcU2QgCVW8VKfFZMTN62/view?usp=sharing);
 - After cloning the repository locally (let's call it *root/*), create a directory called *models/* inside of it (so it should be *root/models/*) and place the downloaded embeddings extractor *embedder.pth* there.
 
 #### (Or train the embeddings extractor on your own)
