@@ -275,8 +275,8 @@ class Enroller:
         img : PIL.Image
             image of a dog
 
-        Return
-        ------
+        Returns
+        -------
         dog_breed : str
             predicted dog breed
         '''

@@ -193,6 +193,11 @@ class EmbeddingsExtractor:
             embeddings from the first image
         embeddings_b : np.array
             embeddings from the second image
+
+        Returns
+        -------
+        distance : float
+            the distance between the two embeddings
         '''
         
         # `distance` computes the euclidean distance between the embeddings
