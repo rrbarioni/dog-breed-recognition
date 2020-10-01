@@ -7,6 +7,7 @@ import numpy as np
 from sklearn.neighbors import KNeighborsClassifier
 
 from embeddings import EmbeddingsExtractor
+from test_enroller import EnrollerEvaluator
 
 class Enroller:
     """
@@ -101,7 +102,7 @@ class Enroller:
             
             # Instantiate a KNN classifier. Also considering the distance
             #   criteria for prediction
-            self.classifier = KNeighborsClassifier(n_neighbors=50,
+            self.classifier = KNeighborsClassifier(n_neighbors=5,
                 weights='distance')
             
             # "Training" the classifier from the current embeddings and dog
@@ -275,8 +276,8 @@ class Enroller:
         img : PIL.Image
             image of a dog
 
-        Return
-        ------
+        Returns
+        -------
         dog_breed : str
             predicted dog breed
         '''
@@ -291,10 +292,19 @@ class Enroller:
             #   using the KNN classifier (as the KNN prediction receives a
             #   batch of samples, `img_embeddings` is attached to a list and
             #   the first result of the batch is extracted)
-            label = self.classifier.predict([img_embeddings])[0]
+            # label = self.classifier.predict([img_embeddings])[0]
+            dists, indexes = self.classifier.kneighbors([img_embeddings])
+            indexes = np.vectorize(lambda x: self.labels[x])(indexes)
+            label = EnrollerEvaluator.predict_label_maj(dists[0], indexes[0],
+                T=2)
             
-            # Get the dog breed name by its index (`dog_breed`)
-            dog_breed = self.classes[label]
+            # Check if the obtained label belongs to a existing dog breed or
+            #   not
+            if label == -1:
+                dog_breed = 'unknown'
+            else:
+                # Get the dog breed name by its index (`dog_breed`)
+                dog_breed = self.classes[label]
         else:
             
             # Ignore the classification task if the dog breed classifier does

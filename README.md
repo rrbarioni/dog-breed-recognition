@@ -1,4 +1,5 @@
 
+
 # dog-breed-recognition
 An algorithm for the recognition of dog breeds from RGB images.
 
@@ -130,3 +131,17 @@ This step is also performed at Google Colab, once it aims to extract embeddings 
 #### Using the dog breed enroller
 
 For usage on an input new dog breed, you may refer to *root/src/enroll.py*; from a directory containing images from the same dog breed, the enroller dynamically adds this dog breed to a classifier, in order to be recognized when inputting new dog image samples of that dog breed.
+
+#### Evaluating the dog breed enroller
+
+For testing the quality of the dog breed enroller, do the following:
+
+- Download the pre-generated embeddings of the training set [here](https://drive.google.com/file/d/1atfoq6365gZfT4F3uauHShx4G14o3LHF/view?usp=sharing);
+- Download the pre-generated embeddings of the enroll test set [here](https://drive.google.com/file/d/1PN6h9YzYITR5jtD3Ydb4YlG0q8c_gOD-/view?usp=sharing);
+- Download the pre-generated embeddings of the test set to be evaluated [here](https://drive.google.com/file/d/1-1LLZdRdVHNWBpBfbSx5vNaGH3Yo3Ans/view?usp=sharing);
+- After cloning the repository locally (let's call it *root/*), create a directory called *models/* inside of it (so it should be *root/models/*). Then, place the three downloaded embeddings files (*initial_enroll.pkl*, *new_enroll.pkl* and *new_enroll_test.pkl*) there;
+- Navigate to the *root/src/* folder and execute the following command:
+````
+python test_enroller.py
+````
+Then, you should analyze accuracy of the embeddings-based dog breed classificator, considering seen and unseen dog breeds.
